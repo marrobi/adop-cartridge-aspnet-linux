@@ -143,12 +143,6 @@ unitTestJob.with{
             |
             |echo "Mount the source code into a container that will run the unit tests"
             |
-            |docker run --rm -v jenkins_slave_home:/jenkins_slave_home/ \\
-            |            		ifourmanov/adop-asp-build \\
-	    |				bash -c "source /root/.dnx/dnvm/dnvm.sh && \\
-            |     			cd /jenkins_slave_home/$JOB_NAME/test/PartsUnlimited.UnitTests/ && \\
-            |     			dnu restore && \\
-            |     			dnx test"
             |
             |set +x
             |'''.stripMargin())
@@ -190,20 +184,7 @@ codeAnalysisJob.with{
       }
     }
   }
-  configure { myProject ->
-    myProject / builders << 'hudson.plugins.sonar.SonarRunnerBuilder'(plugin:"sonar@2.2.1"){
-      properties('''sonar.projectKey=org.cs.reference-application
-sonar.projectName=Reference application
-sonar.projectVersion=1.0.0
-sonar.sources=src
-sonar.language=cs
-sonar.sourceEncoding=UTF-8
-sonar.scm.enabled=false''')
-      javaOpts()
-      jdk('(Inherit From Job)')
-      task()
-    }
-  }
+  
   publishers{
     downstreamParameterized{
       trigger(projectFolderName + "/Parts_Unlimited_Deploy"){
